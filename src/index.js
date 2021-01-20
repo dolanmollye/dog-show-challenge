@@ -46,15 +46,32 @@ function editDog (e) {
     form.breed.value = parent.childNodes[1].textContent
     form.sex.value = parent.childNodes[2].textContent
     const id = parent.id
-    // const newName = parent
-    // const newBreed =
-    // const newSex = 
-    form.addEventListener('submit', () => {
-
+    form.addEventListener('submit', (event) => {
+      handleSubmit(event, id, form)
     })
 }
 
-function handleSubmit(e) {
-    e.preventDefault()
-    console.log(e.target)
+//HANDLER
+function handleSubmit(event, id, form) {
+  event.preventDefault()
+  const table = document.getElementById("table-body")
+  fetch(`http://localhost:3000/dogs/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      "name": form.name.value,
+      "breed": form.breed.value,
+      "sex": form.sex.value
+    })
+  })
+  .then(res => res.json())
+  .then(() => {
+    table.innerHTML = ""
+    form.reset()
+    fetchAllDogs()
+  })
+  .catch(error => console.log(error.message))
 }
